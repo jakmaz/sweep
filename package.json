@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "wxt -b firefox -m 3",
-    "build": "wxt build -b firefox -m 3",
-    "zip": "wxt zip -b firefox -m 3",
+    "build": "wxt build -b firefox -m 3 && node postbuild.js",
+    "zip": "cd .output/firefox-mv3 && zip -r ../sweep.zip . -x '*.DS_Store' '__MACOSX/*' && cd ../..",
     "postinstall": "wxt prepare"
   },
   "dependencies": {
