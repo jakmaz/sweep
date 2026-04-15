@@ -23,3 +23,28 @@ export interface TabAccessInfo {
   lastAccessed: number; // timestamp
   accessCount: number;
 }
+
+export interface ScoredTab {
+  tabId: number;
+  title: string;
+  url: string;
+  score: number;
+  rank: number;
+  recencyScore: number;
+  frequencyScore: number;
+  accessCount: number;
+  lastAccessed: number;
+  isProtected: boolean;
+  protectionReason: string;
+  isEligible: boolean;
+  isDiscarded: boolean;
+}
+
+export interface SweepEvent {
+  timestamp: number;
+  discardedTabs: Array<{ tabId: number; title: string; score: number }>;
+  skippedCount: number;
+  totalTabs: number;
+  eligibleTabs: number;
+  message: string;
+}
