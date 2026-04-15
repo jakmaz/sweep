@@ -1,0 +1,21 @@
+{
+  "extends": "./.wxt/tsconfig.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "entrypoints/**/*.ts",
+    "entrypoints/**/*.svelte",
+    "utils/**/*.ts",
+    "shared/**/*.ts",
+    "wxt.env.d.ts",
+    ".wxt/types/**/*.ts"
+  ]
+}

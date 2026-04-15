@@ -1,0 +1,28 @@
+# Node/Bun
+node_modules/
+bun.lockb
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json
+
+# WXT
+.wxt/
+.output/
+
+# macOS
+.DS_Store
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Editor/IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

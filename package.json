@@ -1,0 +1,21 @@
+{
+  "name": "sweep",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Garbage collector for your browser tabs.",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt -b firefox -m 3",
+    "build": "wxt build -b firefox -m 3",
+    "zip": "wxt zip -b firefox -m 3",
+    "postinstall": "wxt prepare"
+  },
+  "dependencies": {
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "typescript": "^5.0.0",
+    "wxt": "^0.19.0"
+  }
+}
