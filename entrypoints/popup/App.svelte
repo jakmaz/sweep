@@ -92,7 +92,10 @@
 
 <main class="container">
   <div class="header">
-    <h1>Sweep</h1>
+    <div class="logo-container">
+      <img src="/icon.svg" class="logo" alt="Sweep Logo" />
+      <h1>Sweep</h1>
+    </div>
     {#if settings}
       <label class="toggle-label">
         <input 
@@ -126,7 +129,8 @@
 
   {#if activeTab === 'settings'}
     <div class="tab-panel">
-      <div class="accordion">
+      <div class="scrollable-area">
+        <div class="accordion">
         <button class="accordion-trigger" onclick={() => showHowItWorks = !showHowItWorks}>
           <span>How it works</span>
           <span class="accordion-arrow" class:open={showHowItWorks}>▼</span>
@@ -172,7 +176,7 @@
           <div class="param-row">
             <span class="param-name">Max Active Tabs</span>
             <span class="param-value">{settings.maxActiveTabs}</span>
-            <button class="icon-btn" title="Maximum number of tabs to keep loaded. Tabs above this limit get discarded first.">?</button>
+            <button class="icon-btn" data-tooltip="Maximum number of tabs to keep loaded. Tabs above this limit get discarded first.">?</button>
           </div>
           <input 
             type="range" 
@@ -187,7 +191,7 @@
           <div class="param-row">
             <span class="param-name">Min Inactivity</span>
             <span class="param-value">{settings.minInactivityMinutes}m</span>
-            <button class="icon-btn" title="Tabs younger than this are never discarded, even if over the max tab limit.">?</button>
+            <button class="icon-btn" data-tooltip="Tabs younger than this are never discarded, even if over the max tab limit.">?</button>
           </div>
           <input 
             type="range" 
@@ -202,7 +206,7 @@
           <div class="param-row">
             <span class="param-name">Recency Weight</span>
             <span class="param-value">{settings.recencyWeight}</span>
-            <button class="icon-btn" title="How much recently accessed tabs are prioritized. Higher = more important if visited recently.">?</button>
+            <button class="icon-btn" data-tooltip="How much recently accessed tabs are prioritized. Higher = more important if visited recently.">?</button>
           </div>
           <input 
             type="range" 
@@ -215,7 +219,7 @@
           <div class="param-row" style="margin-top: 12px;">
             <span class="param-name">Frequency Weight</span>
             <span class="param-value">{settings.frequencyWeight}</span>
-            <button class="icon-btn" title="How much often-visited tabs are prioritized. Higher = more important if visited many times.">?</button>
+            <button class="icon-btn" data-tooltip="How much often-visited tabs are prioritized. Higher = more important if visited many times.">?</button>
           </div>
           <input 
             type="range" 
@@ -229,7 +233,7 @@
         <div class="card">
           <div class="param-row">
             <span class="param-name">Whitelist</span>
-            <button class="icon-btn" title="Domains that are never discarded, even if they have a low score.">?</button>
+            <button class="icon-btn" data-tooltip="Domains that are never discarded, even if they have a low score.">?</button>
           </div>
           <textarea 
             bind:value={whitelistText} 
@@ -248,6 +252,7 @@
           <button class="secondary" onclick={refreshData}>Refresh</button>
         </div>
       {/if}
+      </div>
     </div>
   {:else}
     <div class="tab-panel">
@@ -273,8 +278,9 @@
           </button>
         </div>
 
-        <div class="tab-list">
-          {#each filteredTabs as tab}
+        <div class="scrollable-area">
+          <div class="tab-list">
+            {#each filteredTabs as tab}
             <div class="tab-row" class:discarded={tab.isDiscarded} class:protected={tab.isProtected}>
               <div class="tab-info">
                 <span class="tab-title">{tab.title || domainFromUrl(tab.url)}</span>
@@ -327,6 +333,7 @@
             {/each}
           </div>
         {/if}
+        </div>
       {/if}
     </div>
   {/if}
