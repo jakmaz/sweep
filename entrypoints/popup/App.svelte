@@ -10,6 +10,8 @@
   let sweepEvents = $state<SweepEvent[]>([]);
   let activeTab = $state<'settings' | 'tabs'>('settings');
   let showHowItWorks = $state(false);
+  let hideDiscarded = $state(true);
+  let searchQuery = $state('');
   let lastSweepMessage = $state('');
   let discarding = $state<number | null>(null);
 
@@ -74,6 +76,18 @@
     if (score >= 0.4) return 'var(--score-mid)';
     return 'var(--score-low)';
   }
+
+  let filteredTabs = $derived.by(() => {
+    let tabs = scoredTabs;
+    if (hideDiscarded) {
+      tabs = tabs.filter(t => !t.isDiscarded);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      tabs = tabs.filter(t => domainFromUrl(t.url).toLowerCase().includes(q) || t.title.toLowerCase().includes(q));
+    }
+    return tabs;
+  });
 </script>
 
 <main class="container">
@@ -240,9 +254,27 @@
       {#if scoredTabs.length === 0}
         <div class="empty-state">No tabs to display</div>
       {:else}
-        <div class="section-header">Scoreboard</div>
+        <div class="section-header">Scoreboard {filteredTabs.length}/{scoredTabs.length}</div>
+        
+        <div class="filter-row">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search domains..."
+            bind:value={searchQuery}
+          />
+          <button 
+            class="filter-btn" 
+            class:active={hideDiscarded}
+            onclick={() => hideDiscarded = !hideDiscarded}
+            title="Show open tabs only"
+          >
+            Open only
+          </button>
+        </div>
+
         <div class="tab-list">
-          {#each scoredTabs as tab}
+          {#each filteredTabs as tab}
             <div class="tab-row" class:discarded={tab.isDiscarded} class:protected={tab.isProtected}>
               <div class="tab-info">
                 <span class="tab-title">{tab.title || domainFromUrl(tab.url)}</span>

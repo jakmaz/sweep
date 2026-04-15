@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <rect width="128" height="128" rx="20" fill="#3b82f6"/>
+  <g fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Broom handle -->
+    <line x1="28" y1="100" x2="60" y2="28"/>
+    <!-- Broom bristles (sweeping motion) -->
+    <path d="M60 28 Q55 15 70 10"/>
+    <path d="M60 28 Q62 12 78 10"/>
+    <path d="M60 28 Q70 12 86 14"/>
+    <!-- Tab/document being swept -->
+    <rect x="54" y="52" width="40" height="50" rx="4" fill="#ffffff" fill-opacity="0.2" stroke="#ffffff"/>
+    <line x1="62" y1="65" x2="86" y2="65" stroke-width="4"/>
+    <line x1="62" y1="77" x2="82" y2="77" stroke-width="4"/>
+    <line x1="62" y1="89" x2="76" y2="89" stroke-width="4"/>
+  </g>
+</svg>

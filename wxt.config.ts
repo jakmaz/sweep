@@ -1,22 +1,31 @@
-import { defineConfig } from 'wxt';
-import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { defineConfig } from "wxt";
+import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 
 export default defineConfig({
   manifestVersion: 3,
-  runner: {
-    binaries: {
-      firefox: '/Applications/Zen.app/Contents/MacOS/zen',
-    },
-  },
   manifest: {
-    name: 'Sweep',
-    description: 'Browser tab garbage collector. Keep your memory lean.',
-    permissions: ['tabs', 'storage', 'alarms'],
-    action: {}
+    name: "Sweep",
+    description: "Focus on what matters. Sweep the rest.",
+    version: "1.0.0",
+    author: "jakmaz",
+    homepage_url: "https://github.com/jakmaz/sweep",
+    permissions: ["tabs", "storage", "alarms"],
+    action: {
+      default_icon: {
+        "16": "/icon.svg",
+        "32": "/icon.svg",
+        "48": "/icon.svg",
+      },
+    },
+    icons: {
+      "48": "/icon.svg",
+      "96": "/icon.svg",
+      "128": "/icon.svg",
+    },
   },
   vite: () => ({
     resolve: {
-      conditions: ['browser', 'svelte'],
+      conditions: ["browser", "svelte"],
     },
     plugins: [
       svelte({
