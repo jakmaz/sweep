@@ -14,6 +14,8 @@ Sweep is a browser extension for Firefox and Zen that intelligently manages open
 - Minimal, clean settings UI built with Svelte 5
 - Dark mode support
 
+> **Note for Zen Browser Users:** Due to current API limitations in how Zen isolates its custom workspaces from standard Firefox WebExtensions, Sweep's tab management is currently bounded to your **active** workspace. It cannot read, score, or unload tabs hidden inside inactive workspaces.
+
 ## Requirements
 
 - **Node.js** ≥ 18 (or **Bun** ≥ 1.0)
