@@ -27,7 +27,7 @@ Sweep is a browser extension for Firefox and Zen that intelligently manages open
 bun install
 ```
 
-## Build
+## Build (Development)
 
 ```bash
 # Build the extension
@@ -39,6 +39,33 @@ bun run zip
 
 The built extension will be at `.output/firefox-mv3/`.  
 The submission zip will be at `.output/sweep.zip`.
+
+## AMO Reviewer Build Instructions
+
+To build an exact copy of this extension from the submitted source code:
+
+1. **Requirements:**
+   - Operating System: macOS or Linux (tested on macOS)
+   - Built environment dependencies: Node.js ≥ 18.0.0 and npm ≥ 9.0.0 (or Bun ≥ 1.0)
+
+2. **Build Steps:**
+   Run the following commands in the root directory:
+   ```bash
+   # 1. Install dependencies
+   npm install
+
+   # 2. Build the extension bundle
+   npm run build
+   ```
+
+3. **Output:**
+   The compiled unpacked extension will be available in the `.output/firefox-mv3/` directory.
+
+4. **Source Code Zip:**
+   To securely package the raw source code for AMO submission without built caches, run:
+   ```bash
+   npm run zip:source
+   ```
 
 ## Development
 

@@ -8,6 +8,7 @@
     "dev": "wxt -b firefox -m 3",
     "build": "wxt build -b firefox -m 3 && node postbuild.js",
     "zip": "cd .output/firefox-mv3 && zip -r ../sweep.zip . -x '*.DS_Store' '__MACOSX/*' && cd ../..",
+    "zip:source": "zip -r sweep-source.zip . -x 'node_modules/*' '.git/*' '.output/*' '*.DS_Store' '__MACOSX/*' '.wxt/*' 'sweep.zip' 'sweep-source.zip' '.rumdl_cache/*'",
     "postinstall": "wxt prepare"
   },
   "dependencies": {
