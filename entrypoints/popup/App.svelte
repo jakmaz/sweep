@@ -10,7 +10,7 @@
   let sweepEvents = $state<SweepEvent[]>([]);
   let activeTab = $state<'settings' | 'tabs'>('settings');
   let showHowItWorks = $state(false);
-  let hideDiscarded = $state(true);
+  let hideUnloaded = $state(true);
   let searchQuery = $state('');
   let lastSweepMessage = $state('');
   let discarding = $state<number | null>(null);
@@ -51,6 +51,19 @@
     await refreshData();
   }
 
+  async function jumpToTab(tabId: number) {
+    try {
+      const tab = await browser.tabs.get(tabId);
+      if (tab.windowId) {
+        await browser.windows.update(tab.windowId, { focused: true });
+      }
+      await browser.tabs.update(tabId, { active: true });
+      window.close();
+    } catch (e) {
+      console.error('Failed to jump to tab', e);
+    }
+  }
+
   function formatTime(timestamp: number): string {
     const diff = Date.now() - timestamp;
     if (diff < 60000) return 'just now';
@@ -72,14 +85,14 @@
   }
 
   function scoreColor(score: number): string {
-    if (score >= 0.7) return 'var(--score-high)';
+    if (score >= 0.8) return 'var(--score-high)';
     if (score >= 0.4) return 'var(--score-mid)';
     return 'var(--score-low)';
   }
 
   let filteredTabs = $derived.by(() => {
     let tabs = scoredTabs;
-    if (hideDiscarded) {
+    if (hideUnloaded) {
       tabs = tabs.filter(t => !t.isDiscarded);
     }
     if (searchQuery.trim()) {
@@ -259,7 +272,10 @@
       {#if scoredTabs.length === 0}
         <div class="empty-state">No tabs to display</div>
       {:else}
-        <div class="section-header">Scoreboard {filteredTabs.length}/{scoredTabs.length}</div>
+        <div class="section-header" style="display: flex; justify-content: space-between;">
+          <span>Scoreboard {filteredTabs.length}/{scoredTabs.length}</span>
+          <span style="font-weight: normal; opacity: 0.8;">↓ Next to unload</span>
+        </div>
         
         <div class="filter-row">
           <input
@@ -270,42 +286,48 @@
           />
           <button 
             class="filter-btn" 
-            class:active={hideDiscarded}
-            onclick={() => hideDiscarded = !hideDiscarded}
-            title="Show open tabs only"
+            class:active={hideUnloaded}
+            onclick={() => hideUnloaded = !hideUnloaded}
+            title="Hide unloaded tabs"
           >
-            Open only
+            Hide unloaded
           </button>
         </div>
 
         <div class="scrollable-area">
           <div class="tab-list">
             {#each filteredTabs as tab}
-            <div class="tab-row" class:discarded={tab.isDiscarded} class:protected={tab.isProtected}>
+            <!-- svelte-ignore a11y_click_events_have_key_events -->
+            <!-- svelte-ignore a11y_no_static_element_interactions -->
+            <div class="tab-row" class:discarded={tab.isDiscarded} class:protected={tab.isProtected && tab.protectionReason !== 'Active tab'} onclick={() => jumpToTab(tab.tabId)}>
               <div class="tab-info">
                 <span class="tab-title">{tab.title || domainFromUrl(tab.url)}</span>
                 <span class="tab-domain">{domainFromUrl(tab.url)}</span>
                 <span class="tab-meta">
                   {tab.accessCount}x · {formatAge(tab.lastAccessed)}
                   {#if tab.isProtected}<span class="badge protected">{tab.protectionReason}</span>{/if}
-                  {#if tab.isDiscarded}<span class="badge discarded">Discarded</span>{/if}
+                  {#if tab.isDiscarded}<span class="badge discarded">Unloaded</span>{/if}
+                  {#if !tab.isDiscarded && tab.protectionReason !== 'Active tab'}
+                    <button 
+                      class="inline-discard" 
+                      onclick={(e) => { e.stopPropagation(); discardTab(tab.tabId); }}
+                      disabled={discarding === tab.tabId}
+                    >
+                      {discarding === tab.tabId ? '...' : 'Unload'}
+                    </button>
+                  {/if}
                 </span>
               </div>
               <div class="tab-score">
-                {#if tab.isProtected || tab.isDiscarded}
-                  <span class="score-immune">—</span>
+                {#if tab.isDiscarded || (tab.isProtected && tab.protectionReason !== 'Active tab')}
+                  <span class="score-immune"></span>
                 {:else}
-                  <span class="score-rank">#{tab.rank}</span>
-                  <span class="score-value" style="color: {scoreColor(tab.score)}">{tab.score.toFixed(2)}</span>
-                {/if}
-                {#if !tab.isProtected && !tab.isDiscarded && tab.isEligible}
-                  <button 
-                    class="discard-btn" 
-                    onclick={() => discardTab(tab.tabId)}
-                    disabled={discarding === tab.tabId}
+                  <span 
+                    class="score-value" 
+                    style="color: {scoreColor(tab.score)}"
                   >
-                    {discarding === tab.tabId ? '...' : '×'}
-                  </button>
+                    {tab.score.toFixed(2)}
+                  </span>
                 {/if}
               </div>
             </div>
@@ -319,9 +341,8 @@
               <div class="history-entry">
                 <div class="history-header">
                   <span class="history-time">{formatTime(event.timestamp)}</span>
-                  <span class="history-count">{event.discardedTabs.length} discarded</span>
+                  <span class="history-count">{event.discardedTabs.length} swept</span>
                 </div>
-                <div class="history-message">{event.message}</div>
                 {#if event.discardedTabs.length > 0}
                   <div class="history-tabs">
                     {#each event.discardedTabs as dt}

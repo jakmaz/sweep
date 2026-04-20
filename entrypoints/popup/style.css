@@ -512,7 +512,7 @@ button.secondary:hover {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 4px 0;
+  overflow: hidden;
 }
 
 .empty-state {
@@ -530,6 +530,7 @@ button.secondary:hover {
   gap: 8px;
   border-top: 1px solid var(--border);
   transition: background 0.1s;
+  cursor: pointer;
 }
 
 .tab-row:hover {
@@ -601,12 +602,6 @@ button.secondary:hover {
   flex-shrink: 0;
 }
 
-.score-rank {
-  font-size: 10px;
-  color: var(--text-muted);
-  min-width: 20px;
-}
-
 .score-value {
   font-size: 12px;
   font-weight: 600;
@@ -619,28 +614,29 @@ button.secondary:hover {
   color: var(--text-muted);
 }
 
-.discard-btn {
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  padding: 0;
+.inline-discard {
+  display: inline-block;
+  background: rgba(107, 114, 128, 0.15);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  margin-left: 4px;
   border-radius: 4px;
-  font-size: 16px;
-  line-height: 1;
-  background: rgba(220, 38, 38, 0.1);
-  color: #dc2626;
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  font-size: 9px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  transition: all 0.15s;
 }
 
-.discard-btn:hover {
-  background: #dc2626;
-  color: white;
-  border-color: #dc2626;
-  opacity: 1;
+.inline-discard:hover {
+  background: rgba(107, 114, 128, 0.3);
+  border-color: var(--text-muted);
 }
 
 .history-entry {
-  padding: 8px 4px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -663,18 +659,13 @@ button.secondary:hover {
 .history-count {
   font-size: 11px;
   font-weight: 500;
-  color: #dc2626;
-}
-
-.history-message {
-  font-size: 11px;
   color: var(--text-muted);
 }
 
 .history-tabs {
-  margin-top: 4px;
+  margin-top: 6px;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 4px;
 }
 
@@ -682,9 +673,8 @@ button.secondary:hover {
   font-size: 10px;
   background: var(--bg);
   color: var(--text-muted);
-  padding: 2px 6px;
-  border-radius: 3px;
-  max-width: 140px;
+  padding: 4px 8px;
+  border-radius: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
