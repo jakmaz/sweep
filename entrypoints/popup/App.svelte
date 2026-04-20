@@ -16,6 +16,11 @@
   let discarding = $state<number | null>(null);
 
   onMount(async () => {
+    const savedTab = localStorage.getItem('sweep_activeTab');
+    if (savedTab === 'tabs') {
+      activeTab = 'tabs';
+    }
+
     settings = await getSettings();
     whitelistText = settings.whitelistDomains.join('\n');
     await refreshData();
@@ -127,14 +132,14 @@
     <button 
       class="tab-btn" 
       class:active={activeTab === 'settings'}
-      onclick={() => activeTab = 'settings'}
+      onclick={() => { activeTab = 'settings'; localStorage.setItem('sweep_activeTab', 'settings'); }}
     >
       Settings
     </button>
     <button 
       class="tab-btn" 
       class:active={activeTab === 'tabs'}
-      onclick={() => activeTab = 'tabs'}
+      onclick={() => { activeTab = 'tabs'; localStorage.setItem('sweep_activeTab', 'tabs'); }}
     >
       Tabs ({scoredTabs.length})
     </button>
