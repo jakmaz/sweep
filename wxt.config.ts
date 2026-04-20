@@ -3,12 +3,10 @@ import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 
 export default defineConfig({
   manifestVersion: 3,
-  id: "sweep@jakmaz",
-  version: "1.0.0",
   manifest: {
     name: "Sweep",
     description: "Focus on what matters. Sweep the rest.",
-    version: "1.0.0",
+    version: "1.1.0",
     author: "jakmaz",
     homepage_url: "https://github.com/jakmaz/sweep",
     permissions: ["tabs", "storage", "alarms"],
