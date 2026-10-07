@@ -15,9 +15,6 @@ export default defineConfig({
         id: "sweep@jakmaz",
       },
     },
-    data_collection_permissions: {
-      feedback: false,
-    },
     action: {
       default_icon: {
         "16": "/icon.svg",
