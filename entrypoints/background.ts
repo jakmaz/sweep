@@ -1,55 +1,38 @@
 import { defineBackground } from 'wxt/sandbox';
-import { initTabTracking } from '../utils/tabManager';
-import { initScheduler } from '../utils/scheduler';
-import { executeSweep, getScoredTabs, manualDiscard, getEvents } from '../utils/sweep';
 import { browser } from 'wxt/browser';
+import { initTabTracking } from '../utils/tab-manager';
+import { initScheduler, syncScheduler, SWEEP_ALARM } from '../utils/scheduler';
+import { executeSweep, getScoredTabs, manualDiscard, getEvents } from '../utils/sweep';
+import { getSettings, saveSettings } from '../utils/storage';
+import { isSweepMessage, type SweepMessage } from '../shared/messages';
+import { normalizeSettings } from '../utils/settings';
+
+async function handleMessage(message: SweepMessage) {
+  switch (message.type) {
+    case 'GET_STATE': {
+      const [settings, tabs, events, alarm] = await Promise.all([
+        getSettings(), getScoredTabs(), getEvents(), browser.alarms.get(SWEEP_ALARM),
+      ]);
+      return { settings, tabs, events, nextSweepAt: settings.enabled ? alarm?.scheduledTime ?? null : null };
+    }
+    case 'FORCE_SWEEP': return executeSweep();
+    case 'MANUAL_DISCARD': return manualDiscard(message.tabId);
+    case 'SAVE_SETTINGS': {
+      await saveSettings(message.settings);
+      await syncScheduler();
+      return normalizeSettings(message.settings);
+    }
+  }
+}
 
 export default defineBackground(() => {
-  console.log('Sweep background started');
-
   initTabTracking();
   initScheduler();
-
-  browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-    console.log('[Sweep] Message received:', message);
-
-    if (message === 'FORCE_SWEEP') {
-      executeSweep().then(sendResponse);
-      return true;
-    }
-
-    if (message === 'GET_SCORED_TABS') {
-      getScoredTabs()
-        .then((tabs) => {
-          console.log('[Sweep] Scored tabs returned:', tabs.length, tabs);
-          sendResponse(tabs);
-        })
-        .catch((err) => {
-          console.error('[Sweep] Error getting scored tabs:', err);
-          sendResponse([]);
-        });
-      return true;
-    }
-
-    if (message.type === 'MANUAL_DISCARD') {
-      console.log('[Sweep] Manual discard request for tab:', message.tabId);
-      manualDiscard(message.tabId)
-        .then((result) => {
-          console.log('[Sweep] Manual discard result:', result);
-          sendResponse(result);
-        })
-        .catch((err) => {
-          console.error('[Sweep] Manual discard error:', err);
-          sendResponse(false);
-        });
-      return true;
-    }
-
-    if (message === 'GET_EVENTS') {
-      getEvents()
-        .then(sendResponse)
-        .catch(() => sendResponse([]));
-      return true;
-    }
+  browser.runtime.onMessage.addListener((message: unknown) => {
+    if (!isSweepMessage(message)) return undefined;
+    return handleMessage(message).then(
+      data => ({ ok: true, data }),
+      (error: unknown) => ({ ok: false, error: error instanceof Error ? error.message : 'Sweep could not complete this action.' }),
+    );
   });
 });

@@ -9,7 +9,8 @@ Sweep does **not** collect, transmit, or share any personal data. All data proce
 Specifically:
 
 - **Tab information** — The extension reads tab titles and URLs solely to determine which tabs to keep active and which to discard. This information is never transmitted to any external server.
-- **Tab history** — Access timestamps and interaction counts for tabs are stored locally in your browser's `browser.storage.local`. This data is used exclusively to calculate tab priority scores for the discarding algorithm. It is never sent anywhere.
+- **Tab activity** — Access timestamps and visit counts are stored in your browser's session storage. Older Firefox versions use local storage and clear these counts when the browser starts. Activity is used exclusively to calculate tab priority scores and is never sent anywhere.
+- **Sweep history** — Up to 50 sweep results, including unloaded tab titles, timestamps, and scores, are stored in `browser.storage.local`. These results are shown in the popup and are never transmitted.
 - **Settings** — Your preferences (e.g., max active tabs, inactivity threshold, whitelist domains) are stored in `browser.storage.local` and are never transmitted externally.
 
 ## Third Parties

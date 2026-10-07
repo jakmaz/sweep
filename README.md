@@ -6,11 +6,13 @@ Sweep is a browser extension for Firefox and Zen that intelligently manages open
 
 ## Features
 
-- Unified scoring algorithm combining recency + frequency weights
+- Unified scoring algorithm combining recency + frequency weights, with frequency influence halving every 24 hours
 - Automatic periodic sweeping via browser alarms
 - Domain whitelist (tabs on whitelisted domains are never discarded)
 - Protection rules: pinned tabs, audible tabs, and the active tab are always safe
 - Manual sweep trigger via popup button
+- One-hour pause, loaded/unloaded counts, and the next sweep time
+- Keep a site loaded directly from the tab list
 - Minimal, clean settings UI built with Svelte 5
 - Dark mode support
 
@@ -89,19 +91,24 @@ The sweep algorithm:
 
 1. Get all normal tabs
 2. Filter out protected tabs (active, pinned, audible, whitelisted domain)
-3. Filter out tabs younger than `minInactivityMinutes`
+3. Filter out tabs accessed within `minInactivityMinutes`
 4. Score remaining tabs: `score = recencyWeight × recencyNorm + frequencyWeight × frequencyNorm`
 5. Sort ascending by score (lowest = discard first)
-6. Discard lowest-scoring tabs until tab count ≤ `maxActiveTabs`
+6. Unload lowest-scoring eligible tabs toward `maxActiveTabs`, checking protection and confirming each unload
+
+The target is best effort: protected and recently accessed tabs can keep the loaded count above it. Activity counts are scoped to the browser session, and page reloads do not count as visits.
 
 ## Settings
 
 | Setting | Description | Default |
 |---------|-------------|---------|
 | `enabled` | Toggle Sweep on/off | `true` |
-| `maxActiveTabs` | Hard cap on kept tabs | `10` |
-| `minInactivityMinutes` | Minimum tab age before eligible | `10` |
+| `maxActiveTabs` | Target number of loaded tabs | `10` |
+| `minInactivityMinutes` | Minimum time since access before eligible | `10` |
 | `recencyWeight` | How much recency matters (0–10) | `6` |
 | `frequencyWeight` | How much frequency matters (0–10) | `4` |
 | `whitelistDomains` | Domains that are never discarded | `[]` |
 | `sweepIntervalMinutes` | Time between automatic sweeps | `5` |
+| `pausedUntil` | Timestamp at which automatic sweeping resumes | `0` |
+
+Run `bun run typecheck` for TypeScript and Svelte compiler checks, and `bun test` for regression tests. Recency and frequency weights are available under advanced settings in the popup.

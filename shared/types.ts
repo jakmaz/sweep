@@ -6,6 +6,7 @@ export interface Settings {
   frequencyWeight: number;
   whitelistDomains: string[];
   sweepIntervalMinutes: number;
+  pausedUntil: number;
 }
 
 export const defaultSettings: Settings = {
@@ -16,12 +17,15 @@ export const defaultSettings: Settings = {
   frequencyWeight: 4,
   whitelistDomains: [],
   sweepIntervalMinutes: 5,
+  pausedUntil: 0,
 };
 
 export interface TabAccessInfo {
   tabId: number;
   lastAccessed: number; // timestamp
   accessCount: number;
+  frequencyCount: number;
+  frequencyUpdatedAt: number;
 }
 
 export interface ScoredTab {
@@ -38,6 +42,7 @@ export interface ScoredTab {
   protectionReason: string;
   isEligible: boolean;
   isDiscarded: boolean;
+  eligibilityReason: string;
 }
 
 export interface SweepEvent {
@@ -46,5 +51,20 @@ export interface SweepEvent {
   skippedCount: number;
   totalTabs: number;
   eligibleTabs: number;
+  message: string;
+  loadedTabs: number;
+  remainingLoadedTabs: number;
+  failedTabs: Array<{ tabId: number; message: string }>;
+}
+
+export interface SweepState {
+  settings: Settings;
+  tabs: ScoredTab[];
+  events: SweepEvent[];
+  nextSweepAt: number | null;
+}
+
+export interface DiscardResult {
+  unloaded: boolean;
   message: string;
 }
